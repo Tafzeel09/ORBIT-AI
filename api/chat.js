@@ -64,11 +64,12 @@ export default async function handler(req, res) {
     }
     const data = await upstream.json();
 
-console.log("FULL RESPONSE:");
-console.log(JSON.stringify(data, null, 2));
+const text =
+  data.content?.find(item => item.type === 'text')?.text || '';
 
-return res.status(200).json(data);
-  } catch (err) {
+return res.status(200).json({ text });
+
+ } catch (err) {
     console.error('Proxy error:', err)
     return res.status(500).json({ error: 'Unexpected server error.' })
   }

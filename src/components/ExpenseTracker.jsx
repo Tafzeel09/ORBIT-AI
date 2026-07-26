@@ -1,11 +1,9 @@
 
-import React, { useState } from 'react'
+import React, { useState,  useEffect } from 'react'
 import { Plus, Trash2, AlertTriangle, Wallet, Target, TrendingUp, DollarSign } from 'lucide-react'
 import { th, genId, today, fmtDate } from '../utils/index.js'
 import { EXPENSE_CATS, CAT_COLORS } from '../data/index.js'
 import { Card, Badge, Btn, Inp, Sel } from './ui/index.jsx'
-
-const BUDGET_DEFAULT = 50000
 
 export default function ExpenseTracker({ expenses, setExpenses, dark, lang }) {
   const t = th(dark)
@@ -13,7 +11,13 @@ export default function ExpenseTracker({ expenses, setExpenses, dark, lang }) {
     title: '', amount: '', category: 'food', date: today(),
   })
   const [catFilter, setCatFilter] = useState('all')
+const [budget, setBudget] = useState(() => {
+  return Number(localStorage.getItem("orbit_budget")) || 50000;
+});
 
+useEffect(() => {
+  localStorage.setItem("orbit_budget", budget);
+}, [budget]);
   const addExpense = () => {
     if (!form.title.trim() || !form.amount) return
     setExpenses((prev) => [{ id: genId(), ...form, amount: parseFloat(form.amount) }, ...prev])
@@ -23,8 +27,8 @@ export default function ExpenseTracker({ expenses, setExpenses, dark, lang }) {
   const deleteExpense = (id) => setExpenses((prev) => prev.filter((e) => e.id !== id))
 
   const total      = expenses.reduce((s, e) => s + e.amount, 0)
-  const remaining  = Math.max(BUDGET_DEFAULT - total, 0)
-  const budgetPct  = Math.min((total / BUDGET_DEFAULT) * 100, 100)
+  const remaining = Math.max(budget - total, 0)
+  const budgetPct = budget > 0 ? Math.min((total / budget) * 100, 100) : 0
   const shown      = catFilter === 'all' ? expenses : expenses.filter((e) => e.category === catFilter)
 
   // Category chart data
@@ -36,7 +40,7 @@ export default function ExpenseTracker({ expenses, setExpenses, dark, lang }) {
 
   const statsData = [
     { label: lang === 'ur' ? 'کل اخراجات' : 'Total Spent', val: `PKR ${total.toLocaleString()}`,           Icon: Wallet,     clr: '#ef4444', bg: '#fef2f2' },
-    { label: lang === 'ur' ? 'بجٹ'        : 'Budget',       val: `PKR ${BUDGET_DEFAULT.toLocaleString()}`, Icon: Target,     clr: '#4f46e5', bg: '#eef2ff' },
+    { label: lang === 'ur' ? 'بجٹ'        : 'Budget',       val: `PKR ${budget.toLocaleString()}`, Icon: Target,     clr: '#4f46e5', bg: '#eef2ff' },
     { label: lang === 'ur' ? 'باقی'       : 'Remaining',    val: `PKR ${remaining.toLocaleString()}`,      Icon: TrendingUp, clr: '#22c55e', bg: '#f0fdf4' },
   ]
 
@@ -55,17 +59,30 @@ export default function ExpenseTracker({ expenses, setExpenses, dark, lang }) {
           </div>
         ))}
       </div>
+<Card dark={dark}>
+  <div style={{ fontWeight: 800, marginBottom: 12 }}>
+    {lang === "ur" ? "ماہانہ بجٹ" : "Monthly Budget"}
+  </div>
 
+  <Inp
+    dark={dark}
+    label={lang === "ur" ? "بجٹ (PKR)" : "Budget (PKR)"}
+    type="number"
+    value={budget}
+    onChange={(v) => setBudget(Number(v) || 0)}
+    placeholder="50000"
+  />
+</Card>
       {/* Budget alert */}
-      {total > BUDGET_DEFAULT * 0.8 && (
+      {total > budget * 0.8 && (
         <div style={{
           display: 'flex', alignItems: 'center', gap: 8, padding: '11px 16px', borderRadius: 12,
-          background: total > BUDGET_DEFAULT ? '#fef2f2' : '#fffbeb',
-          color: total > BUDGET_DEFAULT ? '#ef4444' : '#d97706',
+          background: total > budget? '#fef2f2' : '#fffbeb',
+          color: total > budget ? '#ef4444' : '#d97706',
           fontSize: 13, fontWeight: 700,
         }}>
           <AlertTriangle size={16} />
-          {total > BUDGET_DEFAULT
+          {total > budget
             ? (lang === 'ur' ? 'بجٹ سے تجاوز ہو گیا!' : 'Budget exceeded!')
             : (lang === 'ur' ? 'بجٹ کے قریب پہنچ رہے ہیں!' : 'Approaching budget limit!')}
         </div>

@@ -59,7 +59,8 @@ export default async function handler(req, res) {
     if (!upstream.ok) {
       const errBody = await upstream.text()
       console.error('Anthropic API error:', upstream.status, errBody)
-      return res.status(upstream.status).json({ error: 'AI service error. Please try again shortly.' })
+      return res.status(upstream.status).json({ status: upstream.status,
+    details: errBody })
     }
 
     const data = await upstream.json()

@@ -64,7 +64,12 @@ export default async function handler(req, res) {
     }
 
     const data = await upstream.json()
-    const text = data.content?.[0]?.text || ''
+    const data = await upstream.json();
+
+console.log("FULL RESPONSE:");
+console.log(JSON.stringify(data, null, 2));
+
+return res.status(200).json(data);
     return res.status(200).json({ text })
   } catch (err) {
     console.error('Proxy error:', err)

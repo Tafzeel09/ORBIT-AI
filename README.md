@@ -2,6 +2,11 @@
 
 A production-ready AI-powered productivity web app built with **React + Vite**.
 
+
+🌐 Live Demo
+
+Live Demo: https://orbit-ai-wheat.vercel.app/
+
 ## ✨ Features
 
 | Module | Description |
@@ -166,3 +171,11 @@ No backend required.
 ## 📄 License
 
 MIT License — Free to use, modify, and distribute.
+
+👨‍💻 Developer
+
+Taiba Shabbir
+
+Freelance Web Developer • AI Enthusiast • Quran Teacher
+
+⭐ If you like this project, consider giving it a Star on GitHub!

@@ -60,7 +60,7 @@ useEffect(() => {
         ))}
       </div>
 <Card dark={dark}>
-  <div style={{ fontWeight: 800, marginBottom: 12 }}>
+  <div style={{ fontWeight: 800, marginBottom: 12, color: t.text, }}>
     {lang === "ur" ? "ماہانہ بجٹ" : "Monthly Budget"}
   </div>
 
